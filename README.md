@@ -9,7 +9,7 @@ The script is composed by four sections:
 * entities
 * messages
 
-Every section is identified by its name enclosed in square brackets.
+Every section is identified by its name preceded by a dash (case unsensitive).
 
 ### Title
 The title must be on one line
@@ -36,6 +36,30 @@ where:
 * MESSAGE is the label of the message; if it contains the string "=>" the diagram will also show an immediate response generated from the TO entity towards the FROM entity, with the label identified by what follows the "=>"
 * ORIENTATION is an optional value to specify on which side of the vertical line (starting from the entity) the label must be written
 
-## Screenshot
+## Sample
 
+This script:
+```sh
+- Title
+This is the title 
+
+- Abstract
+This is the abstract of the diagram.\nUse newlines\nfor splitting it into more than one row.
+
+- Entities
+cc|Client 1|actor
+ss|Server
+db|Storage 1|storage
+bu|Backup|storage
+
+# messages are in form of ROW[..ENDING_ROW]|FROM:TO|MESSAGE[=>RESPONSE]|ORIENTATION where ORIENTATION = (LEFT,RIGHT)
+- Messages
+0|cc:ss|Update user data
+0..2|ss|starts working
+1|ss:db|Saving data=>OK
+2|ss:cc|Update was ok
+4|db:bu|Backup thread
+5|bu:db|Process finished
+```
+will produce this diagram:
 ![Sequence Diagram Editor screenshot](https://raw.githubusercontent.com/andreaiacono/andreaiacono.github.io/master/img/SequenceDiagramEditor.png)
