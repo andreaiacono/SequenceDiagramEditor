@@ -208,10 +208,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
         diagramText.setText(FileUtils.readTextFile(fileName));
         actualDiagram = diagramText.getText();
-        String i = null;
-        if (i.indexOf("i") == 0) {
-            i = "";
-        }
+
         // save this file as a recently opened file
         Preferences p = Preferences.userRoot();
         String newOpenedFiles = p.get(Constants.RECENT_FILES_KEY, "") + Constants.FILENAME_SEPARATOR + fileName;
@@ -327,7 +324,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
     private boolean goOnWithModifiedDiagram() {
 
-        if (!actualDiagram.equals(diagramText.getText())) {
+        if (actualDiagram != null && !actualDiagram.equals(diagramText.getText())) {
 
             int userResponse = JOptionPane.showConfirmDialog(
                     null,

@@ -1,26 +1,20 @@
-# title and abstractText must be oneliners; use '\n' for newlines inside the text
 - Title
 This is the title 
 
 - Abstract
 This is the abstract of the diagram.\nUse newlines\nfor splitting it into more than one row.
 
-
-# entities are in form of ID|LABEL[|TYPE] where TYPE = (GENERIC,STORAGE,ACTOR)
 - Entities
-c1|Client 1|actor
-c2|Server
-c3|Storage 1|storage
+cc|Client 1|actor
+ss|Server
+db|Storage 1|storage
+bu|Backup|storage
 
 # messages are in form of ROW[..ENDING_ROW]|FROM:TO|MESSAGE[=>RESPONSE]|ORIENTATION where ORIENTATION = (LEFT,RIGHT)
 - Messages
-0|c1:c2|Message1
-0|c2|starts working
-1|c2:c3|Saving data=>ok
-2|c2:c1|sending back data
-3..6|c1:c2|this is a long thread
-4|c2|the server keeps doing something
-5|c2|we can also write on the other side|left
-6|c1|received data|left
-
-
+0|cc:ss|Update user data
+0..2|ss|starts working
+1|ss:db|Saving data=>OK
+2|ss:cc|Update was ok
+4|db:bu|Backup thread
+5|bu:db|Process finished
