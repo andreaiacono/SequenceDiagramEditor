@@ -93,7 +93,7 @@ public class MessageComponent {
         }
 
         // draws a thread occupation
-        if (message.getDuration() > 1) {
+        if (message.getDuration() >= 1) {
             int endThreadY = (message.getDuration() - message.getRow()) * UserPreferences.MESSAGES_DISTANCE;
             if (message.hasImmediateResponse()) {
                 endThreadY += UserPreferences.FONT_SIZE * 1.6;

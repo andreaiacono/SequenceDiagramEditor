@@ -150,7 +150,7 @@ public class Parser {
             }
             int row = Integer.parseInt(rows);
             message.setRow(row);
-            message.setDuration(1);
+            message.setDuration(0);
         }
         catch (NumberFormatException nfe) {
             throw new NumberFormatException(String.format("The row [%s] is not a valid number", rows));
