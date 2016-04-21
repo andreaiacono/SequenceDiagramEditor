@@ -23,9 +23,12 @@ import java.util.stream.Collectors;
 public class Main extends JFrame implements ActionListener, KeyListener {
 
     static final long serialVersionUID = 0;
+
+    static private final String FILENAME_NOT_SPECIFIED = "filename_not_specified";
+
     private JMenuItem saveMenuItem;
     private boolean isCtrlPressed;
-    private String currentFileName;
+    private Optional<String> currentFileName = Optional.empty();
     private JLabel statusLabel;
     private JTextArea diagramText;
     private SequenceDiagramPanel diagramPanel;
@@ -151,6 +154,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
         try {
             JFileChooser fc = new JFileChooser();
+            Preferences p = Preferences.userRoot();
+            String lastUsedDirectory = p.get(Constants.PREFERENCES_LAST_USED_DIRECTORY, "");
+            fc.setCurrentDirectory(new File(lastUsedDirectory));
+
             int userResponse = fc.showSaveDialog(Main.this);
 
             // if the user pressed "cancel" skips all
@@ -175,6 +182,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
             BufferedImage bi2 = bi.getSubimage(drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height);
 
             ImageIO.write(bi2, "png", new File(exportFilename));
+            updateStatusBar("Diagram exported successfully to " + exportFilename + ".");
             setCursor(Constants.CURSOR_DEFAULT);
         }
         catch (Exception ex) {
@@ -257,12 +265,17 @@ public class Main extends JFrame implements ActionListener, KeyListener {
     private void saveDiagram(String fileName) throws Exception {
 
         FileUtils.writeTextFile(fileName, diagramText.getText());
+        actualDiagram = diagramText.getText();
         updateStatusBar("File [" + fileName + "] saved.");
     }
 
-    public void setCurrentFileName(String currentFileName) {
+    public void setCurrentFileName(String filename) {
+        this.currentFileName = Optional.ofNullable(filename);
+    }
 
-        this.currentFileName = currentFileName;
+
+    public String getCurrentFileName() {
+        return this.currentFileName.orElse(FILENAME_NOT_SPECIFIED);
     }
 
     @Override
@@ -290,7 +303,9 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
     private void newFile() {
         if (goOnWithModifiedDiagram()) {
+            setCurrentFileName(null);
             diagramText.setText("");
+            updateDiagramDrawing();
             repaint();
         }
     }
@@ -338,7 +353,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
             if (userResponse == JOptionPane.YES_OPTION) {
                 try {
-                    saveDiagram(currentFileName);
+                    saveDiagram(getCurrentFileName());
                     return true;
                 }
                 catch (Exception ex) {
@@ -376,21 +391,24 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
         try {
             JFileChooser fc = new JFileChooser();
+            Preferences p = Preferences.userRoot();
+            String lastUsedDirectory = p.get(Constants.PREFERENCES_LAST_USED_DIRECTORY, "");
+            fc.setCurrentDirectory(new File(lastUsedDirectory));
             int userResponse = fc.showSaveDialog(Main.this);
 
             // if the user pressed "ok"
             if (userResponse == JFileChooser.APPROVE_OPTION) {
 
-                currentFileName = fc.getSelectedFile().getPath();
-                if (!currentFileName.toLowerCase().endsWith(".sd")) {
-                    currentFileName += ".sd";
+                String newFileName = fc.getSelectedFile().getAbsolutePath();
+                if (!newFileName.toLowerCase().endsWith(".sd")) {
+                    newFileName += ".sd";
                 }
-
-                File f = new File(currentFileName);
+                setCurrentFileName(newFileName);
+                File f = new File(getCurrentFileName());
                 if (f.exists()) {
                     if (JOptionPane.showConfirmDialog(
                             null,
-                            "The file " + currentFileName + " already exists. Do you want to overwrite it?",
+                            "The file " + getCurrentFileName() + " already exists. Do you want to overwrite it?",
                             "Save Diagram",
                             JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
                         return;
@@ -400,7 +418,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
             else {
                 return;
             }
-            saveDiagram(currentFileName);
+            saveDiagram(getCurrentFileName());
         }
         catch (Exception ex) {
             SwingUtils.showFormError(ex);
@@ -408,8 +426,13 @@ public class Main extends JFrame implements ActionListener, KeyListener {
     }
 
     private void save() {
+        if (getCurrentFileName().equals(FILENAME_NOT_SPECIFIED)) {
+            saveAs();
+            return;
+        }
+
         try {
-            saveDiagram(currentFileName);
+            saveDiagram(getCurrentFileName());
         }
         catch (Exception ex) {
             SwingUtils.showFormError(ex);

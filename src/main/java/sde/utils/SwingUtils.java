@@ -9,11 +9,13 @@ import java.util.Arrays;
 public class SwingUtils {
 
     public static void drawMultilineString(Graphics g2d, String text, int x, int y) {
-        String[] textRows = text.split("\\\\n");
-        int rowY = y;
-        for (String row : textRows) {
-            g2d.drawString(row, x, rowY);
-            rowY += UserPreferences.FONT_SIZE * 1.2;
+        if (text != null) {
+            String[] textRows = text.split("\\\\n");
+            int rowY = y;
+            for (String row : textRows) {
+                g2d.drawString(row, x, rowY);
+                rowY += UserPreferences.FONT_SIZE * 1.2;
+            }
         }
     }
 
