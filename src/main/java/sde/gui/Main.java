@@ -24,7 +24,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
     static final long serialVersionUID = 0;
 
-    static private final String FILENAME_NOT_SPECIFIED = "filename_not_specified";
+    static private final String FILENAME_NOT_SPECIFIED = "";
 
     private JMenuItem saveMenuItem;
     private boolean isCtrlPressed;
@@ -36,10 +36,10 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
     public Main() throws Exception {
 
-        super(Constants.SDE);
+        super();
         setSize(800, 600);
         SwingUtils.centerFrame(this);
-
+        updateTitle();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         try {
@@ -224,8 +224,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
 
         diagramText.setCaretPosition(0);
         setCurrentFileName(fileName);
-        setTitle(String.format("%s [%s]", Constants.SDE, fileName.substring(fileName.lastIndexOf("/") + 1)));
+        updateTitle();
         updateDiagramDrawing();
+    }
+
+    private void updateTitle() {
+        setTitle(String.format("%s [%s]", Constants.SDE, getCurrentFileName().substring(getCurrentFileName().lastIndexOf("/") + 1)));
     }
 
     // updates the diagram and prints a status (ok or error) message on status bar
@@ -306,6 +310,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
             setCurrentFileName(null);
             diagramText.setText("");
             updateDiagramDrawing();
+            updateTitle();
             repaint();
         }
     }
@@ -419,6 +424,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                 return;
             }
             saveDiagram(getCurrentFileName());
+            updateTitle();
         }
         catch (Exception ex) {
             SwingUtils.showFormError(ex);
