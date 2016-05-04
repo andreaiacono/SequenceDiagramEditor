@@ -44,7 +44,7 @@ public class MessageComponent {
                 x[0] = to.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH + 2;
                 x[1] = x[0] - UserPreferences.ARROW_SIZE;
                 x[2] = x[1];
-                SwingUtils.drawAlignedText(g, startY - UserPreferences.FONT_SIZE / 4, from.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH, true, message.getLabel());
+                SwingUtils.drawAlignedText(g, startY - UserPreferences.FONT_SIZE / 4, from.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, true, message.getLabel());
                 g.drawLine(from.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, startY, to.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH, startY);
             }
             g.fillPolygon(x, y, 3);
@@ -59,7 +59,7 @@ public class MessageComponent {
                     SwingUtils.drawAlignedText(
                             g,
                             row_height,
-                            (int) (from.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH * 1.2),
+                            from.getLineStartPoint().x,
                             message.getOrientation() == Message.Orientation.LEFT ? false : true,
                             row);
                     row_height += UserPreferences.FONT_SIZE * 1.2;

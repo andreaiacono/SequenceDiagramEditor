@@ -19,10 +19,10 @@ public class SwingUtils {
         }
     }
 
-    public static void drawAlignedText(Graphics2D g, int y, int x, boolean isStartingLeft, String text) {
+    public static void drawAlignedText(Graphics2D g, int y, int x, boolean isOnRight, String text) {
 
-        if (isStartingLeft) {
-            g.drawString(text, x + UserPreferences.ARROW_SIZE * 2, y);
+        if (isOnRight) {
+            g.drawString(text, x + UserPreferences.ARROW_SIZE , y);
         }
         else {
             int width = SwingUtils.getStringWidth(g, UserPreferences.DIAGRAM_FONT, text);

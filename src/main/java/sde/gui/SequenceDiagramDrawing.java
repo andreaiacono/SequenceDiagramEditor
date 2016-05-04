@@ -111,7 +111,7 @@ public class SequenceDiagramDrawing {
                 0,
                 0,
                 UserPreferences.PADDING + (sequenceDiagram.getEntitiesNumber() + 1) * (UserPreferences.ENTITY_WIDTH + UserPreferences.ENTITY_DISTANCE),
-                entitiesStartY + UserPreferences.ENTITY_HEIGHT * 2 + (maxRow + 2) * UserPreferences.MESSAGES_DISTANCE
+                entitiesStartY + UserPreferences.ENTITY_HEIGHT * 2 + (maxRow + 3) * UserPreferences.MESSAGES_DISTANCE
         );
 
         return rectangle;
