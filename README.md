@@ -63,7 +63,6 @@ ss|Server
 db|Storage 1|storage
 bu|Backup|storage
 
-# messages are in form of ROW[..ENDING_ROW]|FROM:TO|MESSAGE[=>RESPONSE]|ORIENTATION where ORIENTATION = (LEFT,RIGHT)
 - Messages
 0|cc:ss|Update user data
 0..2|ss|starts working
