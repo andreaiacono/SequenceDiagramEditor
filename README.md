@@ -44,7 +44,7 @@ The image creation can also be executed without opening the GUI of the applicati
 * -o the filename of the image to be written
 
 ```sh
-java -jar SequenceDiagramEditor -i /home/andrea/sample_diagram.sd -o /home/andrea/diagram.png
+java -jar SequenceDiagramEditor.jar -i /home/andrea/sample_diagram.sd -o /home/andrea/diagram.png
 ```
 
 ## Sample
