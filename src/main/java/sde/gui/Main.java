@@ -3,6 +3,8 @@ package sde.gui;
 import sde.gui.components.MessageComponent;
 import sde.utils.*;
 
+import java.net.URL;
+import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.Highlighter;
@@ -14,9 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,12 @@ public class Main extends JFrame implements ActionListener, KeyListener {
         SwingUtils.centerFrame(this);
         updateTitle();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        URL url = Main.class.getResource(Constants.ICON_RESOURCE);
+        if (url != null) {
+            // sets the icon only if running inside a JAR
+            setIconImage(new ImageIcon(url).getImage());
+        }
 
         try {
             // creates the menu bar
@@ -98,40 +104,11 @@ public class Main extends JFrame implements ActionListener, KeyListener {
             getContentPane().add("South", statusLabel);
             this.setFocusable(true);
             loadOptions();
-            setVisible(true);
         }
         catch (Exception e) {
             SwingUtils.showFormError(e);
         }
 
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        // sets antialiasing
-        System.setProperty("swing.aatext", "true");
-
-        // Show tool tips after one quarter of a second
-        ToolTipManager.sharedInstance().setInitialDelay(250);
-
-        // tries to set the look and feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception e) {
-            // ok, just tried..
-        }
-
-        try {
-            Main main = new Main();
-            if (args.length > 0) {
-                main.loadDiagram(args[0]);
-            }
-            main.setVisible(true);
-        }
-        catch (Exception e) {
-            SwingUtils.showFormError(e);
-        }
     }
 
     private JMenuItem createMenuItem(String label, int mnemonics, ActionListener listener, boolean addThisListener) {
@@ -151,6 +128,8 @@ public class Main extends JFrame implements ActionListener, KeyListener {
     }
 
     private void exportAsPng() {
+        // sets the cursor
+        setCursor(Constants.CURSOR_WAIT);
 
         try {
             JFileChooser fc = new JFileChooser();
@@ -170,8 +149,18 @@ public class Main extends JFrame implements ActionListener, KeyListener {
                 exportFilename += ".png";
             }
 
-            // sets the cursor
-            setCursor(Constants.CURSOR_WAIT);
+            writePng(exportFilename);
+            setCursor(Constants.CURSOR_DEFAULT);
+            updateStatusBar("Diagram exported successfully to " + exportFilename + ".");
+        }
+        catch (Exception ex) {
+            setCursor(Constants.CURSOR_DEFAULT);
+            SwingUtils.showFormError(ex);
+        }
+    }
+
+    private void writePng(String filename) throws Exception {
+
             diagramPanel.repaint();
             diagramPanel.invalidate();
             Rectangle drawingRect = diagramPanel.getSequenceDiagramDrawing().getDrawedRectangle();
@@ -181,14 +170,7 @@ public class Main extends JFrame implements ActionListener, KeyListener {
             // gets only the part of image with the diagram
             BufferedImage bi2 = bi.getSubimage(drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height);
 
-            ImageIO.write(bi2, "png", new File(exportFilename));
-            updateStatusBar("Diagram exported successfully to " + exportFilename + ".");
-            setCursor(Constants.CURSOR_DEFAULT);
-        }
-        catch (Exception ex) {
-            setCursor(Constants.CURSOR_DEFAULT);
-            SwingUtils.showFormError(ex);
-        }
+            ImageIO.write(bi2, "png", new File(filename));
     }
 
     private void loadOptions() {
@@ -445,4 +427,75 @@ public class Main extends JFrame implements ActionListener, KeyListener {
         }
     }
 
+    static private class Option {
+        String flag, opt;
+
+        public Option(String flag, String opt) {
+            this.flag = flag;
+            this.opt = opt;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        Map<String, String> options = new HashMap<>();
+
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i].charAt(0)) {
+                case '-':
+                    if (args[i].length() < 2) {
+                        System.err.println("Not a valid argument: " + args[i]);
+                        System.exit(1);
+                    }
+                    if (args.length - 1 == i) {
+                        System.err.println("Expected argument after: " + args[i]);
+                        System.exit(1);
+                    }
+
+                    options.put(args[i].substring(1), args[i + 1]);
+                    i++;
+                    break;
+            }
+        }
+
+        // if switches are present on command line
+        if (options.size() > 0) {
+
+            // just creates the diagram image, saves it to disk and exits
+            if (options.size() == 2 && options.containsKey("o") && options.containsKey("i")) {
+
+                String diagramFilename = options.get("i");
+                String imageFilename = options.get("o");
+
+                Main main = new Main();
+                main.loadDiagram(diagramFilename);
+                main.writePng(imageFilename);
+                System.out.println("Image " + imageFilename + " successfully written.");
+                System.exit(0);
+            }
+
+            System.err.println("Syntax: java -jar SequenceDiagramEditor [-i diagramInputFile -o imageOutputFile]");
+            System.exit(1);
+        }
+
+        // sets antialiasing
+        System.setProperty("swing.aatext", "true");
+
+        // tries to set the look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception e) { }
+
+        try {
+            Main main = new Main();
+            if (args.length > 0) {
+                main.loadDiagram(args[0]);
+            }
+            main.setVisible(true);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

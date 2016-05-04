@@ -36,6 +36,17 @@ where:
 * MESSAGE is the label of the message; if it contains the string "=>" the diagram will also show an immediate response generated from the TO entity towards the FROM entity, with the label identified by what follows the "=>"
 * ORIENTATION is an optional value to specify on which side of the vertical line (starting from the entity) the label must be written
 
+## Image export
+You can find the menu item "Export as PNG" in the *Tools* menu, and as the name suggests, it creates a PNG image based on the diagram shown in the canvas.
+
+The image creation can also be executed without opening the GUI of the application; passing the following arguments when invoking the application from the command line will create the image:
+* -i the diagram input file to be read
+* -o the filename of the image to be written
+
+```sh
+java -jar SequenceDiagramEditor -i /home/andrea/sample_diagram.sd -o /home/andrea/diagram.png
+```
+
 ## Sample
 
 This script:

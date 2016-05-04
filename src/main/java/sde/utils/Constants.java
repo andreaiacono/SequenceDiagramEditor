@@ -8,6 +8,7 @@ import java.awt.*;
 public class Constants {
 
     public static final String SDE = "Sequence Diagram Editor";
+    public static final String ICON_RESOURCE = "/sde.png";
 
     public static final Cursor CURSOR_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
     public static final Cursor CURSOR_WAIT = new Cursor(Cursor.WAIT_CURSOR);
