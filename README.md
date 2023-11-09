@@ -27,11 +27,11 @@ where TYPE is optional and can have one of these values: (GENERIC,STORAGE,ACTOR)
 ### Messages
 The messages between two entities are in form of:
 ```sh
-ROW[..ENDING_ROW] | FROM[:TO] | MESSAGE[=>RESPONSE] [|ORIENTATION]
+ROW[..ROWS_NUMBER] | FROM[:TO] | MESSAGE[=>RESPONSE] [|ORIENTATION]
 ```
 where:
 * ROW is the row number where the message has to appear
-* the optional ENDING_ROW is for drawing a sort of working thread on the receiver side
+* the optional ROWS_NUMBER is for drawing a sort of working thread on the receiver side; ROWS_NUMBER specifies how many rows the thread must be long
 * FROM:TO sets the entity from which the message starts and to whom is directed. The :TO part is optional, if we need only to write a label at a specified row for this entity
 * MESSAGE is the label of the message; if it contains the string "=>" the diagram will also show an immediate response generated from the TO entity towards the FROM entity, with the label identified by what follows the "=>"
 * ORIENTATION is an optional value to specify on which side of the vertical line (starting from the entity) the label must be written

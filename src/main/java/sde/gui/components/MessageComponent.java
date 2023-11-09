@@ -37,14 +37,14 @@ public class MessageComponent {
                 x[1] = x[0] + UserPreferences.ARROW_SIZE;
                 x[2] = x[1];
 
-                SwingUtils.drawAlignedText(g, startY - UserPreferences.FONT_SIZE / 4, from.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, false, message.getLabel());
+                drawMultiLine(g);
                 g.drawLine(from.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH, startY, to.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, startY);
             }
             else {
                 x[0] = to.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH + 2;
                 x[1] = x[0] - UserPreferences.ARROW_SIZE;
                 x[2] = x[1];
-                SwingUtils.drawAlignedText(g, startY - UserPreferences.FONT_SIZE / 4, from.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, true, message.getLabel());
+                drawMultiLine(g);
                 g.drawLine(from.getLineStartPoint().x + UserPreferences.WORKING_THREAD_WIDTH, startY, to.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH, startY);
             }
             g.fillPolygon(x, y, 3);
@@ -52,18 +52,7 @@ public class MessageComponent {
         // draws only the label (no To entity)
         else {
             if (message.getLabel() != null) {
-                String[] textRows = message.getLabel().split("\\\\n");
-
-                int row_height = startY;
-                for (String row : textRows) {
-                    SwingUtils.drawAlignedText(
-                            g,
-                            row_height,
-                            from.getLineStartPoint().x,
-                            message.getOrientation() == Message.Orientation.LEFT ? false : true,
-                            row);
-                    row_height += UserPreferences.FONT_SIZE * 1.2;
-                }
+                drawMultiLine(g);
             }
         }
 
@@ -94,7 +83,7 @@ public class MessageComponent {
 
         // draws a thread occupation
         if (message.getDuration() >= 1) {
-            int endThreadY = (message.getDuration() - message.getRow()) * UserPreferences.MESSAGES_DISTANCE;
+            int endThreadY = (message.getDuration()) * UserPreferences.MESSAGES_DISTANCE;
             if (message.hasImmediateResponse()) {
                 endThreadY += UserPreferences.FONT_SIZE * 1.6;
             }
@@ -102,6 +91,22 @@ public class MessageComponent {
             g.fillRect(from.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH / 2, startY, UserPreferences.WORKING_THREAD_WIDTH, endThreadY);
             g.setColor(Color.DARK_GRAY);
             g.drawRect(from.getLineStartPoint().x - UserPreferences.WORKING_THREAD_WIDTH / 2, startY, UserPreferences.WORKING_THREAD_WIDTH, endThreadY);
+        }
+    }
+
+    private void drawMultiLine(Graphics2D g) {
+        String[] textRows = message.getLabel().split("\\\\n");
+
+        int fullHeight = SwingUtils.getStringHeight(g, UserPreferences.DIAGRAM_FONT, message.getLabel());
+        int row_height = startY - fullHeight + UserPreferences.FONT_SIZE / 2;
+        for (String row : textRows) {
+            SwingUtils.drawAlignedText(
+                    g,
+                    row_height,
+                    from.getLineStartPoint().x,
+                    message.getOrientation() == Message.Orientation.LEFT ? false : true,
+                    row);
+            row_height += UserPreferences.FONT_SIZE * 1.2;
         }
     }
 

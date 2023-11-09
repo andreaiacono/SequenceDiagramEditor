@@ -145,7 +145,7 @@ public class Parser {
                 String[] rowsEdges = rows.split(Constants.WORKING_THREAD_ROWS_SEPARATOR_REGEX);
                 int rowStart = Integer.parseInt(rowsEdges[0]);
                 message.setRow(rowStart);
-                message.setDuration(Integer.parseInt(rowsEdges[1]) - rowStart);
+                message.setDuration(Integer.parseInt(rowsEdges[1]));
                 return;
             }
             int row = Integer.parseInt(rows);
